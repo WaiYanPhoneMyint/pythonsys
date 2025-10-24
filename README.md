@@ -15,7 +15,7 @@
   <li>🔑 Admin login and authentication system</li>
   <li>📄 Insert, delete, and update data records</li>
   <li>📢 Insert, delete, and update announcements</li>
-  <li>👤 Insert, delete, and update admin profiles</li>
+  <li>👤 Insert and update admin profiles</li>
   <li>📊 Dashboard with interactive chart views</li>
 </ul>
 
@@ -28,7 +28,6 @@
   <img src="https://img.shields.io/badge/Python-3776AB.svg?style=for-the-badge&logo=python&logoColor=white"/>
   <img src="https://img.shields.io/badge/JavaScript-F7DF1E.svg?style=for-the-badge&logo=javascript&logoColor=black"/>
   <img src="https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white"/>
-  <img src="https://img.shields.io/badge/SQLAlchemy-red?style=for-the-badge&logo=databricks&logoColor=white"/>
   <img src="https://img.shields.io/badge/MySQL-005C84?style=for-the-badge&logo=mysql&logoColor=white"/>
 </p>
 

@@ -12,11 +12,11 @@
 <h2 align="center">🚀 Key Features</h2>
 
 <ul>
-  <li>⚙️ Built with <strong>Flask</strong> — lightweight and flexible web framework</li>
-  <li>💾 Integrated with <strong>SQLAlchemy ORM</strong> and <strong>MySQL</strong> database</li>
-  <li>📄 Organized project structure (static, templates, routes, config)</li>
-  <li>🔐 Secure configuration using environment variables</li>
-  <li>🧩 Extendable for APIs, dashboards, and web panels</li>
+  <li>🔑 Admin login and authentication system</li>
+  <li>📄 Insert, delete, and update data records</li>
+  <li>📢 Insert, delete, and update announcements</li>
+  <li>👤 Insert, delete, and update admin profiles</li>
+  <li>📊 Dashboard with interactive chart views</li>
 </ul>
 
 ---
@@ -32,5 +32,4 @@
 
 ---
 
-<h2 align="center">📁 Project Structure</h2>
-
+<h2 align="center">📁 Project Structure

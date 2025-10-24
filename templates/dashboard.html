@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<h2>User Dashboard</h2>
+
+<!-- Summary Cards -->
+<div class="row text-center mb-4">
+  <div class="col-md-3">
+    <div class="card shadow-sm border-start border-secondary border-4">
+      <div class="card-body">
+        <h6 class="text-muted">Total Users</h6>
+        <h3 class="fw-bold text-secondary">{{ total }}</h3>
+        <span class="badge bg-secondary">All Roles</span>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card shadow-sm border-start border-warning border-4">
+      <div class="card-body">
+        <h6 class="text-muted">VIP Members</h6>
+        <h3 class="fw-bold text-warning">{{ vip }}</h3>
+        <span class="badge bg-warning text-dark">Priority</span>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card shadow-sm border-start border-primary border-4">
+      <div class="card-body">
+        <h6 class="text-muted">Crown Members</h6>
+        <h3 class="fw-bold text-primary">{{ crown }}</h3>
+        <span class="badge bg-primary">Exclusive</span>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card shadow-sm border-start border-indigo border-4">
+      <div class="card-body">
+        <h6 class="text-muted">Premium Members</h6>
+        <h3 class="fw-bold text-indigo">{{ premium }}</h3>
+        <span class="badge bg-indigo">Premium</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Charts Section -->
+<h4 class="mb-3">User Role Breakdown</h4>
+<div class="row mb-4">
+  <div class="col-md-4">
+    <div class="card p-4 h-100">
+      <h6 class="mb-3">Bar Chart</h6>
+      <canvas id="userBarChart" height="200"></canvas>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card p-4 h-100">
+      <h6 class="mb-3">Circle Chart</h6>
+      <canvas id="userCircleChart" height="200"></canvas>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card p-4 h-100">
+      <h6 class="mb-3">Line Chart</h6>
+      <canvas id="userLineChart" height="200"></canvas>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const total = parseInt("{{ total|default(0, true) }}");
+  const vip = parseInt("{{ vip|default(0, true) }}");
+  const crown = parseInt("{{ crown|default(0, true) }}");
+  const premium = parseInt("{{ premium|default(0, true) }}");
+
+  // Bar Chart
+  new Chart(document.getElementById('userBarChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Total', 'VIP', 'Crown', 'Premium'],
+      datasets: [{
+        label: 'Users',
+        data: [total, vip, crown, premium],
+        backgroundColor: ['#6c757d', '#ffc107', '#0d6efd', '#6610f2'],
+        borderRadius: 5
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        title: { display: true, text: 'Bar Chart' }
+      },
+      scales: { y: { beginAtZero: true } }
+    }
+  });
+
+  // Circle Chart
+  new Chart(document.getElementById('userCircleChart'), {
+    type: 'doughnut',
+    data: {
+      labels: ['VIP', 'Crown', 'Premium'],
+      datasets: [{
+        data: [vip, crown, premium],
+        backgroundColor: ['#ffc107', '#0d6efd', '#6610f2'],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { position: 'bottom' },
+        title: { display: true, text: 'Circle Chart' }
+      }
+    }
+  });
+
+  // Line Chart
+  new Chart(document.getElementById('userLineChart'), {
+    type: 'line',
+    data: {
+      labels: ['VIP', 'Crown', 'Premium'],
+      datasets: [{
+        label: 'Users',
+        data: [vip, crown, premium],
+        borderColor: '#6610f2',
+        backgroundColor: 'rgba(102,16,242,0.2)',
+        tension: 0.3,
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false },
+        title: { display: true, text: 'Line Chart' }
+      },
+      scales: { y: { beginAtZero: true } }
+    }
+  });
+</script>
+{% endblock %}

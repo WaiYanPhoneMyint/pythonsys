@@ -1,0 +1,185 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center mt-4">
+  <div class="col-md-12">
+    <div class="card shadow-sm mb-4">
+      <div class="card-header bg-primary text-white">
+        <h4 class="mb-0">Send Announcement</h4>
+      </div>
+      <div class="card-body">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+        <form method="post">
+          <div class="mb-3">
+            <textarea name="content" class="form-control" rows="3" placeholder="Write your announcement here..." required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Post Announcement</button>
+        </form>
+      </div>
+    </div>
+    <div class="card shadow-sm">
+      <div class="card-header bg-secondary text-white">
+        <h5 class="mb-0">All Announcements</h5>
+      </div>
+      <div class="card-body p-0">
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap px-3 pt-3">
+          <div class="d-flex align-items-center mb-2 mb-md-0">
+            <label for="announcementEntries" class="me-2">Show</label>
+            <select class="form-select form-select-sm" id="announcementEntries" style="width: auto;">
+              <option value="10" selected>10</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+              <option value="all">All</option>
+            </select>
+            <span class="ms-2">entries</span>
+          </div>
+        </div>
+        <table class="table table-hover table-bordered mb-0">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Text</th>
+              <th>Time</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="announcementTableBody">
+            {% for a in announcements %}
+            <tr>
+              <td>{{ a.id }}</td>
+              <td>{{ a.content }}</td>
+              <td>{{ a.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+              <td>
+                <a href="{{ url_for('edit_announcement', id=a.id) }}" class="btn btn-sm btn-warning me-1">
+                  <i class="bi bi-pencil-square"></i>
+                </a>
+                <form method="post" action="{{ url_for('delete_announcement', id=a.id) }}" style="display:inline;">
+                  <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this announcement?');">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <nav>
+          <ul class="pagination justify-content-center my-3" id="announcementPagination"></ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Entries dropdown and pagination logic for announcements
+    const entriesSelect = document.getElementById('announcementEntries');
+    const tableBody = document.getElementById('announcementTableBody');
+    const allRows = Array.from(tableBody.querySelectorAll('tr'));
+    const pagination = document.getElementById('announcementPagination');
+    let rowsPerPage = entriesSelect.value === 'all' ? 'all' : parseInt(entriesSelect.value) || 10;
+    let currentPage = 1;
+
+    function showPage(page) {
+      if (rowsPerPage === 'all') {
+        allRows.forEach(row => row.style.display = '');
+        renderPagination(1, 1);
+        return;
+      }
+      const totalPages = Math.ceil(allRows.length / rowsPerPage);
+      currentPage = Math.max(1, Math.min(page, totalPages));
+      const start = (currentPage - 1) * rowsPerPage;
+      const end = start + rowsPerPage;
+      allRows.forEach((row, index) => {
+        row.style.display = (index >= start && index < end) ? '' : 'none';
+      });
+      renderPagination(currentPage, totalPages);
+    }
+
+    function renderPagination(currentPage, totalPages) {
+      pagination.innerHTML = '';
+      if (rowsPerPage === 'all' || totalPages <= 1) return;
+      // First
+      const firstLi = document.createElement('li');
+      firstLi.className = 'page-item' + (currentPage === 1 ? ' disabled' : '');
+      firstLi.innerHTML = `<a class="page-link" href="#">&laquo;</a>`;
+      firstLi.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (currentPage > 1) showPage(1);
+      });
+      pagination.appendChild(firstLi);
+      // Prev
+      const prevLi = document.createElement('li');
+      prevLi.className = 'page-item' + (currentPage === 1 ? ' disabled' : '');
+      prevLi.innerHTML = `<a class="page-link" href="#">&lt;</a>`;
+      prevLi.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (currentPage > 1) showPage(currentPage - 1);
+      });
+      pagination.appendChild(prevLi);
+      // Page numbers (show max 5, with ellipsis)
+      let startPage = Math.max(1, currentPage - 2);
+      let endPage = Math.min(totalPages, currentPage + 2);
+      if (currentPage <= 3) endPage = Math.min(5, totalPages);
+      if (currentPage >= totalPages - 2) startPage = Math.max(1, totalPages - 4);
+      if (startPage > 1) {
+        const li = document.createElement('li');
+        li.className = 'page-item disabled';
+        li.innerHTML = `<span class="page-link">...</span>`;
+        pagination.appendChild(li);
+      }
+      for (let i = startPage; i <= endPage; i++) {
+        const li = document.createElement('li');
+        li.className = 'page-item' + (i === currentPage ? ' active' : '');
+        li.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+        li.addEventListener('click', function (e) {
+          e.preventDefault();
+          showPage(i);
+        });
+        pagination.appendChild(li);
+      }
+      if (endPage < totalPages) {
+        const li = document.createElement('li');
+        li.className = 'page-item disabled';
+        li.innerHTML = `<span class="page-link">...</span>`;
+        pagination.appendChild(li);
+      }
+      // Next
+      const nextLi = document.createElement('li');
+      nextLi.className = 'page-item' + (currentPage === totalPages ? ' disabled' : '');
+      nextLi.innerHTML = `<a class="page-link" href="#">&gt;</a>`;
+      nextLi.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (currentPage < totalPages) showPage(currentPage + 1);
+      });
+      pagination.appendChild(nextLi);
+      // Last
+      const lastLi = document.createElement('li');
+      lastLi.className = 'page-item' + (currentPage === totalPages ? ' disabled' : '');
+      lastLi.innerHTML = `<a class="page-link" href="#">&raquo;</a>`;
+      lastLi.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (currentPage < totalPages) showPage(totalPages);
+      });
+      pagination.appendChild(lastLi);
+    }
+
+    entriesSelect.addEventListener('change', function () {
+      rowsPerPage = this.value === 'all' ? 'all' : parseInt(this.value);
+      showPage(1);
+    });
+
+    showPage(1); // Initialize
+  });
+</script>
+{% endblock %}

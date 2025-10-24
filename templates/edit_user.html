@@ -1,0 +1,40 @@
+{% block title %}Edit User{% endblock %}
+{% block content %}
+<!-- <h2>Edit User</h2> -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+<form method="post" action="{{ url_for('update_user', user_id=user.id) }}">
+  <div class="mb-3">
+    <label for="editUsername" class="form-label">Username</label>
+    <input type="text" class="form-control" id="editUsername" name="username" value="{{ user.username }}" required>
+  </div>
+  <div class="mb-3">
+    <label for="editEmail" class="form-label">Email</label>
+    <input type="email" class="form-control" id="editEmail" name="email" value="{{ user.email }}" required>
+  </div>
+  <div class="mb-3">
+    <label for="editContact" class="form-label">Contact</label>
+    <input type="text" class="form-control" id="editContact" name="contact" value="{{ user.contact }}">
+  </div>
+  <div class="mb-3">
+    <label for="userRole" class="form-label">Role</label>
+    <select class="form-select" id="userRole" name="role" required>
+      <option value="Vip" {% if user.role == 'Vip' %}selected{% endif %}>Vip</option>
+      <option value="Premium" {% if user.role == 'Premium' %}selected{% endif %}>Premium</option>
+      <option value="Crown" {% if user.role == 'Crown' %}selected{% endif %}>Crown</option>
+    </select>
+  </div>
+  <div class="mt-4 d-flex justify-content-end gap-2">
+    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+    <button type="submit" class="btn btn-primary">Update</button>
+  </div>
+</form>
+{% endblock %}

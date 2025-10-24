@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center mt-4">
+  <div class="col-md-12">
+    <div class="card shadow-sm">
+      <div class="card-header bg-warning text-dark">
+        <h4 class="mb-0">Edit Announcement</h4>
+      </div>
+      <div class="card-body">
+        <form method="post">
+          <div class="mb-3">
+            <textarea name="content" class="form-control" rows="3" required>{{ announcement.content }}</textarea>
+          </div>
+          <button type="submit" class="btn btn-warning">Update Announcement</button>
+          <a href="{{ url_for('announcement') }}" class="btn btn-secondary ms-2">Cancel</a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
